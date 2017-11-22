@@ -59,7 +59,7 @@ class Post
     }
 
     /**
-     * @return mixed
+     * @return \DateTime
      */
     public function getDatetime()
     {
@@ -74,6 +74,11 @@ class Post
     {
         $this->datetime = $datetime;
         return $this;
+    }
+
+    public function getDate()
+    {
+        return $this->getDatetime()->format('Y-m-dTH:i:s\Z');
     }
 
     /**
