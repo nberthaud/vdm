@@ -30,8 +30,13 @@ services:
         tags: ['controller.service_arguments']
 
     AppBundle\Manager\:
-      resource: '../../src/AppBundle/Manager'
-      public: true
+        resource: '../../src/AppBundle/Manager'
+        public: true
+
+    AppBundle\WebLoader\:
+        resource: '../../src/AppBundle/WebLoader'
+        public: true
+
     # add more services, or override services that need manual wiring
     # AppBundle\Service\ExampleService:
     #     arguments:

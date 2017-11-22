@@ -2,22 +2,24 @@
 namespace AppBundle\Command;
 
 use AppBundle\Manager\PostManager;
+use AppBundle\WebLoader\VdmPostLoader;
 use Doctrine\ORM\EntityManager;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class DownloadPostsCommand extends Command
 {
-    /** @var PostManager */
-    private $postManager;
+    /** @var VdmPostLoader */
+    private $vdmPostLoader;
 
     /** @var EntityManager */
     private $em;
 
-    public function __construct(PostManager $postManager, EntityManager $em)
+    public function __construct(VdmPostLoader $vdmPostLoader, EntityManager $em)
     {
-        $this->postManager = $postManager;
+        $this->vdmPostLoader = $vdmPostLoader;
         $this->em = $em;
 
         parent::__construct();
@@ -35,20 +37,48 @@ class DownloadPostsCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output->writeln([
+            '',
+            '===============',
             'Posts Refresher',
             '===============',
             '',
         ]);
 
-        $posts = $this->postManager->getLastsPosts();
+        $output->writeln([
+            'Downloading posts from viedemerde',
+            'Please wait...',
+            '',
+        ]);
+
+        $posts = $this->vdmPostLoader->getLastsPosts();
+
+        $output->writeln([
+            'Now, cleaning the database for new batch of posts',
+            '',
+        ]);
 
         $this->em->getRepository('AppBundle:Post')
                  ->clearAllPosts();
+
+        $output->writeln([
+            'Inserting posts into database',
+            '',
+        ]);
 
         foreach ($posts as $post) {
             $this->em->persist($post);
         }
 
+        $output->writeln([
+            'Flushing...',
+            '',
+        ]);
+
         $this->em->flush();
+
+        $output->writeln([
+            'Process cleared',
+            '',
+        ]);
     }
 }
