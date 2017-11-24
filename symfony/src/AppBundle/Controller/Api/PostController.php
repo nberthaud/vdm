@@ -7,6 +7,8 @@ use AppBundle\Form\Type\SearchPostsType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 /**
  * Class ApiPostController
@@ -28,14 +30,14 @@ class PostController extends AbstractApiController
 
         if ($form->isValid()) {
             $data = $form->getData();
+        } elseif ($form->getErrors()) {
+            return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
-
-        extract($data);
 
         $posts = $this
             ->getDoctrine()
             ->getRepository('AppBundle:Post')
-            ->search($from, $to, $author)
+            ->search($data['from'], $data['to'], $data['author'])
         ;
 
         $this->normalizer->setIgnoredAttributes(['datetime']);
