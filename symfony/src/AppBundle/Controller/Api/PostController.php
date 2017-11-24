@@ -16,7 +16,6 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
  */
 class PostController extends AbstractApiController
 {
-    //http://symfony.dev/app_dev.php/api/posts?from=2012-12-01T12:50:00&to=2012-12-01T12:50:00&author=toto
     /**
      * @Route("/posts", name="api_posts")
      * @param Request $request
