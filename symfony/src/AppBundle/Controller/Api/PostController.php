@@ -3,10 +3,8 @@
 namespace AppBundle\Controller\Api;
 
 use AppBundle\Entity\Post;
+use AppBundle\Form\Type\SearchPostsType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
-use Symfony\Component\Form\Extension\Core\Type\DateType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -24,21 +22,22 @@ class PostController extends AbstractApiController
      */
     public function postsAction(Request $request)
     {
-//        $form = $this->createFormBuilder(null, ['csrf_protection' => false])
-//            ->add('from', DateTimeType::class, ['required' =>  false, 'date_widget' => 'single_text'])
-//            ->add('to', DateType::class, ['required' =>  false])
-//            ->add('author', TextType::class, ['required' =>  false])
-//            ->setMethod('GET')
-//            ->getForm();
-//
-//        //$form->handleRequest($request);
-//
-//        $form->submit($request->query->all());
-//        $form->isValid();
-//        $data = $form->getData();
-//        //$data = $form->get('author')->getData();
-//var_dump($data);
-        $posts = $this->getDoctrine()->getRepository('AppBundle:Post')->findAll();
+        $data = ['from' => null, 'to' => null, 'author' => null];
+        $form = $this->createForm(SearchPostsType::class);;
+        $form->submit($request->query->all());
+
+        if ($form->isValid()) {
+            $data = $form->getData();
+        }
+
+        extract($data);
+
+        $posts = $this
+            ->getDoctrine()
+            ->getRepository('AppBundle:Post')
+            ->search($from, $to, $author)
+        ;
+
         $this->normalizer->setIgnoredAttributes(['datetime']);
         return $this->prepareJsonResponse($posts, 'posts', 'count: '.count($posts));
     }
