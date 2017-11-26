@@ -6,26 +6,26 @@ Pour des informations supplémentaires concernant l'environnement docker, se ré
 Editer le .env à votre convenance. Il faudra configurer le parameters.yml avec les mêmes infos.
 
 ```bash
-docker-compose build
-docker-compose up -d
+$ docker-compose build
+$ docker-compose up -d
 ```
 
 ```bash
-docker-compose exec php bash
-composer install
-bin/console doctrine:schema:update --force
+$ docker-compose exec php bash
+$ composer install
+$ bin/console doctrine:schema:update --force
 ```
 
 ## Pour charger les posts de viedemerde :
 
 ```bash
-bin/console app:posts:refresh
+$ bin/console app:posts:refresh
 ```
 
 ##  Pour jouer les TU :
 ```bash
-docker-compose exec php bash
-vendor/bin/phpunit
+$ docker-compose exec php bash
+$ vendor/bin/phpunit
 ```
 
 # Docker Symfony (PHP7-FPM - NGINX - MySQL - ELK)
