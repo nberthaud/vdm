@@ -1,3 +1,33 @@
+# VDM Installation notes : 
+Pour des informations supplémentaires concernant l'environnement docker, se réferer à la section "Docker Symfony (PHP7-FPM - NGINX - MySQL - ELK)" de ce document située plus bas  
+
+
+## Pour monter l'environnement :
+Editer le .env à votre convenance. Il faudra configurer le parameters.yml avec les mêmes infos.
+
+```bash
+docker-compose build
+docker-compose up -d
+```
+
+```bash
+docker-compose exec php bash
+composer install
+bin/console doctrine:schema:update --force
+```
+
+## Pour charger les posts de viedemerde :
+
+```bash
+bin/console app:posts:refresh
+```
+
+##  Pour jouer les TU :
+```bash
+docker-compose exec php bash
+vendor/bin/phpunit
+```
+
 # Docker Symfony (PHP7-FPM - NGINX - MySQL - ELK)
 
 [![Build Status](https://travis-ci.org/maxpou/docker-symfony.svg?branch=master)](https://travis-ci.org/maxpou/docker-symfony)
