@@ -23,15 +23,14 @@ class PostController extends AbstractApiController
      */
     public function postsAction(Request $request)
     {
-        $data = ['from' => null, 'to' => null, 'author' => null];
         $form = $this->createForm(SearchPostsType::class);;
         $form->submit($request->query->all());
 
-        if ($form->isValid()) {
-            $data = $form->getData();
-        } elseif ($form->getErrors()) {
+        if (!$form->isValid()) {
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
+
+        $data = $form->getData();
 
         $posts = $this
             ->getDoctrine()
