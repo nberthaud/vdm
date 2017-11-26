@@ -29,7 +29,7 @@ class PostController extends AbstractApiController
         if (!$form->isValid()) {
             return new JsonResponse(null, Response::HTTP_BAD_REQUEST);
         }
-
+        //If no search parameters given, default values will be returned. In this case, null
         $data = $form->getData();
 
         $posts = $this
@@ -38,8 +38,9 @@ class PostController extends AbstractApiController
             ->search($data['from'], $data['to'], $data['author'])
         ;
 
+        //Date getter will be used instead
         $this->normalizer->setIgnoredAttributes(['datetime']);
-        return $this->prepareJsonResponse($posts, 'posts', 'count: '.count($posts));
+        return $this->prepareJsonResponse($posts, 'posts', '"count": '.count($posts));
     }
 
     /**
@@ -50,6 +51,7 @@ class PostController extends AbstractApiController
      */
     public function postAction(Request $request, Post $post)
     {
+        //Date getter will be used instead
         $this->normalizer->setIgnoredAttributes(['datetime']);
         return $this->prepareJsonResponse($post, 'post');
     }

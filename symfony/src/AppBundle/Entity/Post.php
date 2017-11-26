@@ -76,6 +76,9 @@ class Post
         return $this;
     }
 
+    /**
+     * @return string
+     */
     public function getDate()
     {
         return $this->getDatetime()->format('Y-m-d\TH:i:s\Z');

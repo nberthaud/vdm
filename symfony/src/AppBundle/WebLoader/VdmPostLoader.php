@@ -5,14 +5,23 @@ namespace AppBundle\WebLoader;
 use AppBundle\Entity\Post;
 use Symfony\Component\DomCrawler\Crawler as DomCrawler;
 
+/**
+ * Give the ability to get the last 200 posts from the viedemerde website.
+ *
+ * Class VdmPostLoader
+ * @package AppBundle\WebLoader
+ */
 class VdmPostLoader
 {
     /**
+     * Extract the author from a viedemerde shaped author/date string.
+     *
      * @param $string
      * @return bool|mixed
      */
     public function extractAuthorFromString($string)
     {
+        //extract pattern
         $pattern = '#^.*Par\s(.*)\s-\s.*$#m';
         $matches = [];
         preg_match($pattern, $string, $matches);
@@ -21,11 +30,14 @@ class VdmPostLoader
     }
 
     /**
+     * Extract and convert a string to an UTC Datetime from a viedemerde shaped author/date string.
+     *
      * @param $string
      * @return bool|\DateTime
      */
     public function extractDatetimeFromString($string)
     {
+        //extract pattern
         $pattern = '#^.*\/\s(.*)\s\/.*$#m';
         $matches = [];
         preg_match($pattern, $string, $matches);
@@ -34,6 +46,7 @@ class VdmPostLoader
             return false;
         }
 
+        //Convert date into a usable format
         $dateFormatter = new \IntlDateFormatter(
             "fr-FR",
             \IntlDateFormatter::FULL,
@@ -43,9 +56,10 @@ class VdmPostLoader
             'EEEE dd MMMM y hh:mm'
         );
 
-        $ts = $dateFormatter->parse($matches[1]);
+        //We need to get the timestamp to instantiate the final datetime object and converting the date to UTC
+        $timestamp = $dateFormatter->parse($matches[1]);
         $date = new \DateTime();
-        $date->setTimestamp($ts);
+        $date->setTimestamp($timestamp);
         $date->setTimezone(new \DateTimeZone("UTC"));
 
         return $date;
@@ -53,6 +67,9 @@ class VdmPostLoader
 
 
     /**
+     * Call the viedemerde website page after page to reach the 200 posts download.
+     * An array of posts is returned.
+     *
      * @param int $quantity
      * @return array
      */
@@ -64,7 +81,9 @@ class VdmPostLoader
         $pageId = 1;
         $nbPosts = 0;
 
+        //For each page posts are extracted until we reach 200
         while ($nbPosts < $quantity) {
+            //Url and css selectors should be parameters but are left hardcoded intentionnaly
             $res = $client->request('GET', 'http://www.viedemerde.fr/?page=' . $pageId);
             $html = (string)$res->getBody(true);
 
@@ -84,6 +103,9 @@ class VdmPostLoader
     }
 
     /**
+     * Give the ability to extract information from a viedemerde post node
+     * A brand new post is returned if success.
+     *
      * @param DomCrawler $node
      * @return Post|bool
      */
